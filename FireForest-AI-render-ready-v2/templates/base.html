@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FireForest AI: preliminary forest fire visual-change assessment.">
+  <title>{% block title %}FireForest AI{% endblock %}</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>.eyebrow{margin:0 0 .8rem}</style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% block content %}{% endblock %}
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

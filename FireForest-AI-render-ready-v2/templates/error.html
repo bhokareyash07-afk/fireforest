@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | FireForest AI{% endblock %}
+{% block content %}
+<main class="error-page"><a href="{{ url_for('index') }}" class="wordmark">FireForest <span>AI</span></a><div><p class="eyebrow green">FIREFOREST AI</p><h1>{{ title }}</h1><p>{{ message }}</p><a class="button primary-button" href="{{ url_for('upload') }}">Start a new analysis</a></div></main>
+{% endblock %}

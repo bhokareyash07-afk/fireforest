@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Upload Forest Images | FireForest AI{% endblock %}
+{% block content %}
+<header class="site-header">
+  <a href="{{ url_for('index') }}" class="wordmark">FireForest <span>AI</span></a>
+  <div class="header-label">Forest Fire Damage Assessment</div>
+  <a href="{{ url_for('index') }}" class="text-link">Home</a>
+</header>
+<main class="page-shell">
+  <section class="page-intro">
+    <p class="eyebrow green">STEP 1 OF 2 · UPLOAD &amp; VALIDATE</p>
+    <h1>Compare your forest images</h1>
+    <p>Upload one image from before the fire and one from after it. Each image is independently checked for a suitable forest or fire-damaged forest scene before analysis.</p>
+  </section>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack" aria-live="polite">
+      {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form id="analysis-form" action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" novalidate>
+    <div class="upload-grid">
+      <section class="upload-card" data-role="before">
+        <div class="upload-card-top"><span class="stage-badge before">Before-fire</span><span class="required">Required</span></div>
+        <h2>Before-fire forest image</h2>
+        <p>Healthy forest, woodland, or a tree-covered landscape.</p>
+        <label class="dropzone" for="before_image">
+          <input id="before_image" name="before_image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-role="before" required>
+          <span class="drop-icon">↑</span><strong>Choose a forest image</strong><small>JPG, JPEG, PNG, or WEBP · up to {{ max_upload_mb }} MB</small>
+        </label>
+        <div class="preview-wrap" hidden><img alt="Before-fire image preview"><button type="button" class="remove-file">Remove image</button></div>
+        <div class="validation-status" aria-live="polite"></div>
+      </section>
+      <section class="upload-card" data-role="after">
+        <div class="upload-card-top"><span class="stage-badge after">After-fire</span><span class="required">Required</span></div>
+        <h2>After-fire forest image</h2>
+        <p>Fire-damaged, burned, or later forest scene from the same area where possible.</p>
+        <label class="dropzone" for="after_image">
+          <input id="after_image" name="after_image" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-role="after" required>
+          <span class="drop-icon">↑</span><strong>Choose a forest image</strong><small>JPG, JPEG, PNG, or WEBP · up to {{ max_upload_mb }} MB</small>
+        </label>
+        <div class="preview-wrap" hidden><img alt="After-fire image preview"><button type="button" class="remove-file">Remove image</button></div>
+        <div class="validation-status" aria-live="polite"></div>
+      </section>
+    </div>
+    <aside class="privacy-note"><span aria-hidden="true">◈</span> Images are checked by a pretrained image-classification model and then processed for visual change. They are not publicly published by this application.</aside>
+    <div class="form-actions">
+      <a class="button ghost-button" href="{{ url_for('index') }}">Back to home</a>
+      <button class="button primary-button" id="analyze-button" type="submit" disabled><span class="button-label">Analyse Forest Damage</span><span class="loading-dots" hidden>Validating images<span>.</span><span>.</span><span>.</span></span></button>
+    </div>
+  </form>
+</main>
+{% endblock %}

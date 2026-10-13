@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}FireForest AI | Forest Fire Damage Assessment{% endblock %}
+{% block content %}
+<main class="hero-page">
+  <div class="hero-shade"></div>
+  <header class="college-header">
+    <div class="logo-slot" aria-label="College logo area">
+      <img src="{{ url_for('static', filename='images/college-logo.png') }}" alt="College logo" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+      <span class="logo-placeholder" hidden>College<br>Logo</span>
+      <small>Replace <code>static/images/college-logo.png</code></small>
+    </div>
+    <div class="college-name">
+      <p>Kasegaon Education Society's</p>
+      <h1>Rajarambapu Institute of Technology, Islampur</h1>
+    </div>
+    <div class="brand-mark" aria-label="FireForest AI">FF<span>AI</span></div>
+  </header>
+
+  <section class="hero-content">
+    <p class="eyebrow">COLLEGE ENGINEERING PROJECT · ENVIRONMENTAL CONSERVATION</p>
+    <h2>Forest Fire Damage Assessment<br><em>and Replantation Planning System</em></h2>
+    <p class="hero-copy">FireForest AI compares two forest photographs to map visible change, communicate uncertainty, and support preliminary restoration planning.</p>
+    <blockquote>“Restoring forests today creates a greener tomorrow.”</blockquote>
+    <a class="button primary-button" href="{{ url_for('upload') }}">Start Project Analysis <span aria-hidden="true">→</span></a>
+  </section>
+
+  <footer class="hero-footer">
+    <div><strong>PROJECT TEAM</strong><span>Mr. Suyash Kamble · Mr. Arihant Choudhari · Mr. Yash Bhokare · Mr. Abhishek Patil</span></div>
+    <div><strong>PROJECT GUIDE</strong><span>Prof. D. Patil</span></div>
+  </footer>
+</main>
+{% endblock %}

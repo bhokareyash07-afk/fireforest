@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Analysis Results | FireForest AI{% endblock %}
+{% block content %}
+<header class="site-header">
+  <a href="{{ url_for('index') }}" class="wordmark">FireForest <span>AI</span></a>
+  <div class="header-label">Analysis <span class="analysis-id">#{{ analysis.analysis_id[:8] }}</span></div>
+  <a href="{{ url_for('upload') }}" class="text-link">New analysis</a>
+</header>
+<main class="results-shell">
+  <section class="result-intro">
+    <p class="eyebrow green">STEP 2 OF 2 · PRELIMINARY VISUAL-CHANGE ASSESSMENT</p>
+    <h1>Forest damage analysis</h1>
+    <p>Processed {{ analysis.created_at[:10] }} · {{ analysis.dimensions.analyzed_width }} × {{ analysis.dimensions.analyzed_height }} analyzed pixels</p>
+  </section>
+
+  <section class="result-section" id="comparison">
+    <div class="section-heading"><p>Section A</p><h2>Input image comparison</h2></div>
+    <div class="comparison-grid">
+      <figure class="image-card"><img src="{{ url_for('analysis_image', analysis_id=analysis.analysis_id, image_kind='before') }}" alt="Original before-fire forest image"><figcaption><span>Before-fire image</span><small>{{ analysis.dimensions.before_original.width }} × {{ analysis.dimensions.before_original.height }} pixels</small></figcaption></figure>
+      <figure class="image-card"><img src="{{ url_for('analysis_image', analysis_id=analysis.analysis_id, image_kind='after') }}" alt="Original after-fire forest image"><figcaption><span>After-fire image</span><small>{{ analysis.dimensions.after_original.width }} × {{ analysis.dimensions.after_original.height }} pixels</small></figcaption></figure>
+    </div>
+  </section>
+
+  <section class="result-section" id="heatmap">
+    <div class="section-heading"><p>Section B</p><h2>Generated damage heatmap</h2></div>
+    <div class="heatmap-layout">
+      <figure class="heatmap-card"><img src="{{ url_for('analysis_image', analysis_id=analysis.analysis_id, image_kind='heatmap') }}" alt="Generated detected-change heatmap overlay"><figcaption>A generated overlay, based on the same mutually exclusive masks used for the statistics below.</figcaption></figure>
+      <div class="heatmap-explainer"><h3>Change-intensity legend</h3><ul class="legend-list"><li><span class="swatch red"></span><strong>Red</strong><span>Highest detected image-change intensity</span></li><li><span class="swatch yellow"></span><strong>Yellow</strong><span>Moderate detected image-change intensity</span></li><li><span class="swatch blue"></span><strong>Blue</strong><span>Lower detected image-change intensity</span></li></ul><a class="button secondary-button" href="{{ url_for('download_heatmap', analysis_id=analysis.analysis_id) }}">Download heatmap</a></div>
+    </div>
+  </section>
+
+  <section class="result-section" id="statistics">
+    <div class="section-heading"><p>Section C</p><h2>Analysis statistics</h2></div>
+    <div class="stat-layout">
+      <div class="stat-total"><span>Total detected change</span><strong>{{ '%.2f'|format(analysis.percentages.total) }}<small>%</small></strong><p>{{ analysis.pixel_counts.detected_change | int }} of {{ analysis.pixel_counts.total_analyzed | int }} analyzed pixels</p></div>
+      <div class="bar-chart" role="img" aria-label="Detected-change category percentages: red {{ analysis.percentages.red }} percent, yellow {{ analysis.percentages.yellow }} percent, blue {{ analysis.percentages.blue }} percent">
+        {% for key, label in [('red', 'Highest / red'), ('yellow', 'Moderate / yellow'), ('blue', 'Lower / blue')] %}
+          <div class="bar-row"><span>{{ label }}</span><div class="bar-track"><i class="bar-fill {{ key }}" style="width: {{ [analysis.percentages[key] * 3, 100]|min }}%"></i></div><strong>{{ '%.2f'|format(analysis.percentages[key]) }}%</strong></div>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="method-note">These percentages refer to image pixels classified by detected-change intensity. They are not verified percentages of burned forest.</p>
+  </section>
+
+  <section class="result-section" id="description">
+    <div class="section-heading"><p>Section D</p><h2>Descriptive analysis</h2></div>
+    <div class="narrative-card">
+      <p>The system corrected supported image orientation on upload and compared both images in a common {{ analysis.dimensions.analyzed_width }} × {{ analysis.dimensions.analyzed_height }} pixel frame. {{ analysis.pipeline.resize_note }} Noise reduction was applied with edge-preserving and Gaussian smoothing before a pixel-level L*a*b* colour-distance comparison.</p>
+      <p>{{ analysis.pipeline.alignment_note }} Pixels at or above the configured change threshold were treated as significant visual change. The processed difference values were split into mutually exclusive lower (blue), moderate (yellow), and highest (red) categories; every detected-change pixel belongs to exactly one category.</p>
+      <p>The generated heatmap overlays these masks on the post-fire image. Of the total analyzed area, <strong>{{ '%.2f'|format(analysis.percentages.total) }}%</strong> was detected as changed: <strong>{{ '%.2f'|format(analysis.percentages.red) }}%</strong> highest/red, <strong>{{ '%.2f'|format(analysis.percentages.yellow) }}%</strong> moderate/yellow, and <strong>{{ '%.2f'|format(analysis.percentages.blue) }}%</strong> lower/blue.</p>
+    </div>
+  </section>
+
+  <section class="result-section" id="restoration">
+    <div class="section-heading"><p>Section E</p><h2>Replantation and restoration planning</h2></div>
+    <div class="recommendation-grid">{% for item in analysis.restoration %}<article class="recommendation-card"><h3>{{ item.level }}</h3><p class="coverage">{{ item.coverage }}</p><p>{{ item.advice }}</p></article>{% endfor %}</div>
+    <p class="method-note">Final replantation decisions require field verification, soil assessment, ecological information, and appropriate local species selection. This preliminary assessment does not prescribe species, tree counts, hectares, or costs.</p>
+  </section>
+
+  <section class="result-section limitation" id="limitations"><div class="section-heading"><p>Section F</p><h2>Limitations</h2></div><p>This system identifies visual changes between two images. Changes may also result from lighting, shadows, seasons, image alignment, camera angle, or other environmental factors. The heatmap is a preliminary image-change assessment and does not independently confirm burned vegetation or ecological damage. Field verification is required before restoration decisions.</p></section>
+
+  <nav class="result-actions" aria-label="Analysis navigation"><a class="button ghost-button" href="{{ url_for('upload') }}">Back to upload</a><a class="button secondary-button" href="{{ url_for('download_heatmap', analysis_id=analysis.analysis_id) }}">Download heatmap</a><a class="button primary-button" href="{{ url_for('upload') }}">Start new analysis</a></nav>
+</main>
+{% endblock %}
